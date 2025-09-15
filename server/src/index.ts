@@ -1,4 +1,4 @@
-import express from "express"; 
+import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -19,19 +19,24 @@ const DB_NAME = process.env.DB_NAME || "flowerShop";
 app.use(cors());
 app.use(express.json());
 
-
+// API
 app.use("/api/shops", shopRoutes);
 app.use("/api/flowers", flowerRoutes);
 app.use("/api/bouquets", bouquetRoutes);
 app.use("/api/orders", orderRoutes);
 
+const clientBuildPath = path.resolve(__dirname, "../../client/build");
 
-const clientBuildPath = path.join(__dirname, "../client/build");
+
 app.use(express.static(clientBuildPath));
 
 
-app.get("*", (_req, res) => {
+app.get("/*", (_req, res) => {
   res.sendFile(path.join(clientBuildPath, "index.html"));
+});
+
+app.use((req, res) => {
+  if (!res.headersSent) res.status(404).send("Not Found");
 });
 
 mongoose
