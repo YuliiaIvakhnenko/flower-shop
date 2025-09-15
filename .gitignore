@@ -1,0 +1,41 @@
+# OS / редактори
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+
+# Env
+.env
+.env.*
+*.local
+
+# Кеші/артефакти
+node_modules/
+dist/
+build/
+.tmp/
+.cache/
+.vite/
+.parcel-cache/
+.turbo/
+coverage/
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Пакети менеджерів
+pnpm-lock.yaml
+# (або залиште ЛОКФАЙЛ — це добра практика. Якщо вирішите залишати, приберіть з ігнору)
+# yarn.lock
+# package-lock.json
+
+# IDE
+.vscode/
+.idea/
+
+# Next.js (якщо раптом)
+.next/
+
+# Storybook (якщо буде)
+.storybook-out/
