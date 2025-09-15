@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
+import fs from "fs"; // ⬅️ додай
 
 import shopRoutes from "./routes/shops";
 import flowerRoutes from "./routes/flowers";
@@ -16,30 +17,35 @@ const PORT = Number(process.env.PORT) || 8080;
 const DB_URI = process.env.MONGODB_URI || "";
 const DB_NAME = process.env.DB_NAME || "flowerShop";
 
-
 app.use(cors());
 app.use(express.json());
-
 
 app.use("/api/shops", shopRoutes);
 app.use("/api/flowers", flowerRoutes);
 app.use("/api/bouquets", bouquetRoutes);
 app.use("/api/orders", orderRoutes);
 
+// === STATIC + SPA fallback ===
+const spaCandidates = [
+  path.resolve(__dirname, "../../client/build"), // CRA
+  path.resolve(__dirname, "../../client/dist"),  // Vite
+  path.resolve(__dirname, "./public"),          // копія всередині server (як резерв)
+];
 
-const clientBuildPath = path.resolve(__dirname, "../../client/build");
+const clientBuildPath =
+  spaCandidates.find(p => fs.existsSync(path.join(p, "index.html"))) ?? spaCandidates[0];
+
+console.log("SPA path:", clientBuildPath, "exists=",
+  fs.existsSync(path.join(clientBuildPath, "index.html")));
 
 app.use(express.static(clientBuildPath, { index: false }));
 
-
 app.get("/health", (_req, res) => res.json({ ok: true }));
-
 
 app.use((req, res, next) => {
   const isApi = req.path.startsWith("/api/");
   const isHealth = req.path.startsWith("/health");
   const wantsHtml = !!req.accepts("html");
-
   if (req.method === "GET" && !isApi && !isHealth && wantsHtml) {
     return res.sendFile(path.join(clientBuildPath, "index.html"));
   }
@@ -50,6 +56,7 @@ app.use((req, res) => {
   if (!res.headersSent) res.status(404).send("Not Found");
 });
 
+// === START + DB ===
 (async () => {
   console.log("ENV check:", { hasURI: !!DB_URI, DB_NAME, PORT });
 
@@ -62,19 +69,9 @@ app.use((req, res) => {
     }
   } catch (err) {
     console.error("MongoDB connection error:", err);
-
   }
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 })();
-
-
-process.on("SIGINT", async () => {
-  try {
-    await mongoose.disconnect();
-  } finally {
-    process.exit(0);
-  }
-});
