@@ -18,7 +18,7 @@ const FlowerSelector: React.FC<Props> = ({ value, onSelect }) => {
 
   useEffect(() => {
     axios
-      .get<Flower[]>("http://localhost:8080/api/flowers")
+      .get<Flower[]>("/api/flowers")
       .then((res) => setFlowers(res.data))
       .catch((err) => console.error(err));
   }, []);

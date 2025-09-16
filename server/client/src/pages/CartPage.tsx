@@ -1,13 +1,11 @@
-// src/pages/CartPage.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 
-// прості валідатори
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const uaPhoneRe = /^\+?380\d{9}$/; // +380XXXXXXXXX
-const addressRe = /[A-Za-zА-Яа-яІіЇїЄєҐґ0-9]{5,}/; // мінімально осмислено
+const uaPhoneRe = /^\+?380\d{9}$/; 
+const addressRe = /[A-Za-zА-Яа-яІіЇїЄєҐґ0-9]{5,}/; 
 
 export default function CartPage() {
   const { items, total, inc, dec, remove, clear } = useCart();
@@ -16,7 +14,6 @@ export default function CartPage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
 
-  // показувати помилки тільки після blur
   const [touched, setTouched] = useState({
     name: false,
     email: false,
@@ -28,7 +25,6 @@ export default function CartPage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // підвантажити збережені значення з localStorage
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("checkout:v1") || "{}");
@@ -39,7 +35,6 @@ export default function CartPage() {
     } catch {}
   }, []);
 
-  // зберігати у localStorage при зміні
   useEffect(() => {
     const payload = { name, email, phone, address };
     localStorage.setItem("checkout:v1", JSON.stringify(payload));
@@ -71,13 +66,11 @@ export default function CartPage() {
         })),
       };
 
-      const res = await axios.post<{ _id: string }>("http://localhost:8080/api/orders", payload);
+      const res = await axios.post<{ _id: string }>("/api/orders", payload);
 
-      // збережемо гарний номер для OrderDetails
       const pretty = makePrettyOrderId(res.data._id);
       localStorage.setItem("lastOrderPretty", pretty);
 
-      // повне очищення форми та кешу
       setName("");
       setEmail("");
       setPhone("");
@@ -85,7 +78,7 @@ export default function CartPage() {
       setTouched({ name: false, email: false, phone: false, address: false });
       localStorage.removeItem("checkout:v1");
 
-      clear(); // очистити кошик
+      clear(); 
       navigate(`/order/${res.data._id}`, { replace: true });
     } catch (e: any) {
       setError(e?.response?.data?.error || "Failed to create order");
@@ -101,7 +94,6 @@ export default function CartPage() {
       </div>
 
       <div className="cart-layout">
-        {/* LEFT: form */}
         <div className="panel form-panel">
           <label className="label">Name</label>
           <input
@@ -144,7 +136,6 @@ export default function CartPage() {
           {!addressOk && touched.address && <small className="field-hint">Введіть коректну адресу</small>}
         </div>
 
-        {/* RIGHT: items */}
         <div className="panel items-panel">
           <span className="label">Items</span>
           <div className="cart-items scroll">

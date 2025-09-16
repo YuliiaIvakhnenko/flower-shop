@@ -8,7 +8,7 @@ const ShopSelector: React.FC<ShopSelectorProps> = ({ onSelect }) => {
   const [shops, setShops] = useState<Shop[]>([]);
 
   useEffect(() => {
-    axios.get<Shop[]>("http://localhost:8080/api/shops")
+    axios.get<Shop[]>("/api/shops")
       .then((res) => setShops(res.data))
       .catch((err) => console.error(err));
   }, []);

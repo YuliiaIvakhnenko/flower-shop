@@ -43,3 +43,9 @@ pnpm-lock.yaml
 # env
 server/.env
 
+
+# env
+server/.env
+
+# archives
+*.zip

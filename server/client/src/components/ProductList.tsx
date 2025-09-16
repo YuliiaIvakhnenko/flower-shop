@@ -47,9 +47,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
 
   useEffect(() => {
-    const url = show === "flowers"
-      ? "http://localhost:8080/api/flowers"
-      : "http://localhost:8080/api/bouquets";
+    const url = show === "flowers" ? "/api/flowers" : "/api/bouquets";
 
     const params: Record<string, string | boolean> = { sort, shopId };
     if (favorites) params.favorites = true;

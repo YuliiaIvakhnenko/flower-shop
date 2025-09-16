@@ -18,7 +18,7 @@ const FlowerFilterDropdown: React.FC<FlowerFilterDropdownProps> = ({ selected, o
 
   useEffect(() => {
     axios
-      .get<Flower[]>("http://localhost:8080/api/flowers")
+      .get<Flower[]>("/api/flowers")
       .then((res) => setFlowers(res.data))
       .catch((err) => console.error("Error fetching flowers", err));
   }, []);

@@ -46,7 +46,7 @@ export default function OrderDetailsPage() {
 
   useEffect(() => {
     axios
-      .get<OrderResp>(`http://localhost:8080/api/orders/${id}`)
+      .get<OrderResp>(`/api/orders/${id}`)
       .then((res) => setOrder(res.data))
       .catch((err) => setError(err?.response?.data?.error || "Error loading order"));
   }, [id]);
