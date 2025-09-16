@@ -39,3 +39,7 @@ pnpm-lock.yaml
 
 # Storybook (якщо буде)
 .storybook-out/
+
+# env
+server/.env
+
