@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
-import fs from "fs"; // ⬅️ додай
+import fs from "fs";
 
 import shopRoutes from "./routes/shops";
 import flowerRoutes from "./routes/flowers";
@@ -20,28 +20,35 @@ const DB_NAME = process.env.DB_NAME || "flowerShop";
 app.use(cors());
 app.use(express.json());
 
+// API
 app.use("/api/shops", shopRoutes);
 app.use("/api/flowers", flowerRoutes);
 app.use("/api/bouquets", bouquetRoutes);
 app.use("/api/orders", orderRoutes);
 
-// === STATIC + SPA fallback ===
+// ===== SPA static + fallback =====
+// Після компіляції __dirname -> server/dist, а client лежить у server/client
 const spaCandidates = [
-  path.resolve(__dirname, "../../client/build"), // CRA
-  path.resolve(__dirname, "../../client/dist"),  // Vite
-  path.resolve(__dirname, "./public"),          // копія всередині server (як резерв)
+  path.resolve(__dirname, "../client/build"), // CRA
+  path.resolve(__dirname, "../client/dist"),  // Vite
+  path.resolve(__dirname, "./public"),        // резерв
 ];
 
 const clientBuildPath =
   spaCandidates.find(p => fs.existsSync(path.join(p, "index.html"))) ?? spaCandidates[0];
 
-console.log("SPA path:", clientBuildPath, "exists=",
-  fs.existsSync(path.join(clientBuildPath, "index.html")));
+console.log(
+  "SPA path:",
+  clientBuildPath,
+  "exists=",
+  fs.existsSync(path.join(clientBuildPath, "index.html"))
+);
 
 app.use(express.static(clientBuildPath, { index: false }));
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
+// Фолбек: віддаємо index.html для всіх GET, що не /api/* і не /health
 app.use((req, res, next) => {
   const isApi = req.path.startsWith("/api/");
   const isHealth = req.path.startsWith("/health");
@@ -52,11 +59,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// 404 (на випадок, якщо нічого не відпрацювало)
 app.use((req, res) => {
   if (!res.headersSent) res.status(404).send("Not Found");
 });
 
-// === START + DB ===
+// ===== Start =====
 (async () => {
   console.log("ENV check:", { hasURI: !!DB_URI, DB_NAME, PORT });
 
