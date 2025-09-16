@@ -8,7 +8,12 @@
   --text:#2d0f1f;
   --shadow:0 2px 5px rgba(0,0,0,.05);
 }
-
+html, body {
+  max-width: 100%;
+  overflow-x: hidden; /* тимчасово: прибирає горизонтальний скрол */
+}
+* { box-sizing: border-box; }
+img, video { max-width: 100%; height: auto; display: block; }
 body{ background:linear-gradient(180deg,var(--pink-1),var(--pink-2)); }
 
 /* ========= App ========= */
